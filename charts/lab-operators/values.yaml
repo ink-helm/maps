@@ -5,6 +5,32 @@
 #   values-compute.yaml  — for compute cluster (kubernetes + postgres)
 #
 # Fleet bundles reference these overlay files via helm.valuesFiles.
+#
+# ── Image versioning contract ─────────────────────────────────────────────────
+#
+# Operator image versions are determined by:
+#   operators.<name>.image  — full image repository path (e.g. ghcr.io/ink-logic/lab-kubernetes)
+#   operators.<name>.tag    — image tag to deploy
+#
+# The Helm chart version (e.g. 2026.4.1234) and Chart.yaml appVersion are
+# INDEPENDENT of the operator image tag. appVersion is informational only and
+# records the git SHA at time of chart publication. Do NOT rely on appVersion
+# for deployment image selection.
+#
+# Docker image tags published by CI:
+#   main branch  : yyyy.m.d-<sha7>                  (e.g. 2026.4.20-abc1234)
+#   feature branch: yyyy.m.d-<branch-slug>-<sha7>   (e.g. 2026.4.20-feature-69-abc1234)
+#   release tag  : <semver without v>               (e.g. 1.2.3)
+#
+# To pin a specific operator image version at deploy time, set the tag in your
+# Fleet bundle values or via --set at helm upgrade time:
+#
+#   operators:
+#     kubernetes:
+#       tag: "2026.4.20-abc1234"
+#
+# This overrides the default tag without changing anything else in the chart.
+# ─────────────────────────────────────────────────────────────────────────────
 
 # -- Namespace where all operator pods and RBAC resources are deployed.
 namespace: lab-system
@@ -18,11 +44,18 @@ imagePullPolicy: Always
 
 # -- Per-operator configuration.
 # Set enabled: true for operators that should run on this cluster.
+#
+# image + tag are the source of truth for which container image is deployed.
+# Override tag in your Fleet bundle or helm values to pin a specific build.
 operators:
   kubernetes:
     # lab-kubernetes runs on BOTH control and compute clusters.
     enabled: true
+    # image: full repository path for the operator container image.
     image: ghcr.io/ink-logic/lab-kubernetes
+    # tag: the image tag to pull. Override this to pin a specific build.
+    # CI publishes tags in the form: yyyy.m.d-<sha7> (main) or
+    # yyyy.m.d-<branch-slug>-<sha7> (feature branches).
     tag: latest
     resources:
       requests:
@@ -103,4 +136,6 @@ operators:
       - name: ASPNETCORE_URLS
         value: "http://+:8080"
       - name: Logging__LogLevel__Default
+        value: "Information"
+      - name: Logging__LogLevel__KubeOps
         value: "Information"
