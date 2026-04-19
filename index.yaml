@@ -13,4 +13,57 @@ entries:
     urls:
     - https://github.com/ink-helm/maps/releases/download/empty-1.0.0/empty-1.0.0.tgz
     version: 1.0.0
-generated: "2026-04-19T17:34:53.588983198Z"
+  lab-crds:
+  - annotations:
+      artifacthub.io/category: integration-delivery
+    apiVersion: v2
+    appVersion: 1ad30a3
+    created: "2026-04-19T22:04:38.724902995Z"
+    description: 'Custom Resource Definitions (CRDs) for the Lab operator platform.
+      Contains all shared and operator-owned CRDs across all API groups. This chart
+      must be installed before lab-operators on every cluster. '
+    digest: ae9f3cfd6dc9273bf6f0e5db8b6f55d125f6bd21d927a47e8cc7a5a1a4ba0dab
+    home: https://github.com/ink-logic/lab
+    keywords:
+    - lab
+    - operators
+    - crds
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: lab-crds
+    sources:
+    - https://github.com/ink-logic/lab
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/lab-crds-0.1.0-main.20260419220424.1ad30a3/lab-crds-0.1.0-main.20260419220424.1ad30a3.tgz
+    version: 0.1.0-main.20260419220424.1ad30a3
+  lab-operators:
+  - annotations:
+      artifacthub.io/category: integration-delivery
+    apiVersion: v2
+    appVersion: 1ad30a3
+    created: "2026-04-19T22:04:38.888215711Z"
+    description: 'Runtime operator workloads for the Lab platform. Deploys Deployments,
+      Services, ServiceAccounts, ClusterRoles, and ClusterRoleBindings for the lab-kubernetes,
+      lab-github, lab-discord, and lab-postgres operators. Requires the lab-crds chart
+      to be installed first. '
+    digest: cb5f52d665f6860873aded98882e300d838d4994dc1dee957fb30660e622e565
+    home: https://github.com/ink-logic/lab
+    keywords:
+    - lab
+    - operators
+    - kubernetes
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: lab-operators
+    sources:
+    - https://github.com/ink-logic/lab
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/lab-operators-0.1.0-main.20260419220424.1ad30a3/lab-operators-0.1.0-main.20260419220424.1ad30a3.tgz
+    version: 0.1.0-main.20260419220424.1ad30a3
+generated: "2026-04-19T22:04:38.888227057Z"
