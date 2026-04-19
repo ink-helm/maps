@@ -17,6 +17,31 @@ entries:
   - annotations:
       artifacthub.io/category: integration-delivery
     apiVersion: v2
+    appVersion: c1deac5
+    created: "2026-04-19T23:59:14.56885332Z"
+    description: 'Custom Resource Definitions (CRDs) for the Lab operator platform.
+      Contains all shared and operator-owned CRDs across all API groups. This chart
+      must be installed before lab-operators on every cluster. '
+    digest: 42f9298e7045bb1c618a80bffb2a23888ba91a973dd29b902a05cef3e4dc46a1
+    home: https://github.com/ink-logic/lab
+    keywords:
+    - lab
+    - operators
+    - crds
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: lab-crds
+    sources:
+    - https://github.com/ink-logic/lab
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/lab-crds-2026.4.183/lab-crds-2026.4.183.tgz
+    version: 2026.4.183
+  - annotations:
+      artifacthub.io/category: integration-delivery
+    apiVersion: v2
     appVersion: 1ad30a3
     created: "2026-04-19T22:04:38.724902995Z"
     description: 'Custom Resource Definitions (CRDs) for the Lab operator platform.
@@ -43,6 +68,32 @@ entries:
   - annotations:
       artifacthub.io/category: integration-delivery
     apiVersion: v2
+    appVersion: c1deac5
+    created: "2026-04-19T23:59:14.6861489Z"
+    description: 'Runtime operator workloads for the Lab platform. Deploys Deployments,
+      Services, ServiceAccounts, ClusterRoles, and ClusterRoleBindings for the lab-kubernetes,
+      lab-github, lab-discord, and lab-postgres operators. Requires the lab-crds chart
+      to be installed first. '
+    digest: 7c77920cba97750a246e30738dcac6914dc8b0ca0f2616888c59aa4d7ed743a9
+    home: https://github.com/ink-logic/lab
+    keywords:
+    - lab
+    - operators
+    - kubernetes
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: lab-operators
+    sources:
+    - https://github.com/ink-logic/lab
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/lab-operators-2026.4.183/lab-operators-2026.4.183.tgz
+    version: 2026.4.183
+  - annotations:
+      artifacthub.io/category: integration-delivery
+    apiVersion: v2
     appVersion: 1ad30a3
     created: "2026-04-19T22:04:38.888215711Z"
     description: 'Runtime operator workloads for the Lab platform. Deploys Deployments,
@@ -66,4 +117,4 @@ entries:
     urls:
     - https://github.com/ink-helm/maps/releases/download/lab-operators-0.1.0-main.20260419220424.1ad30a3/lab-operators-0.1.0-main.20260419220424.1ad30a3.tgz
     version: 0.1.0-main.20260419220424.1ad30a3
-generated: "2026-04-19T22:04:38.888227057Z"
+generated: "2026-04-19T23:59:14.686164734Z"
