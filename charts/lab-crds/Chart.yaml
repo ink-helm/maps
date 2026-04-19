@@ -1,0 +1,24 @@
+apiVersion: v2
+name: lab-crds
+description: >
+  Custom Resource Definitions (CRDs) for the Lab operator platform.
+  Contains all shared and operator-owned CRDs across all API groups.
+  This chart must be installed before lab-operators on every cluster.
+type: application
+version: 0.1.0-main.20260419220424.1ad30a3
+appVersion: "1ad30a3"
+keywords:
+  - lab
+  - operators
+  - crds
+  - inklogic
+home: https://github.com/ink-logic/lab
+sources:
+  - https://github.com/ink-logic/lab
+maintainers:
+  - name: ink-logic
+    url: https://github.com/ink-logic
+annotations:
+  # CRD charts have no templates — all resources live under crds/
+  # Helm installs crds/ content before templated resources (upgrade safety).
+  artifacthub.io/category: integration-delivery

@@ -1,0 +1,106 @@
+# lab-operators default values
+#
+# Use this file as the base. Override with:
+#   values-control.yaml  — for control cluster (kubernetes + github + discord)
+#   values-compute.yaml  — for compute cluster (kubernetes + postgres)
+#
+# Fleet bundles reference these overlay files via helm.valuesFiles.
+
+# -- Namespace where all operator pods and RBAC resources are deployed.
+namespace: lab-system
+
+# -- Global image pull secrets (list of secret names in the operator namespace).
+imagePullSecrets: []
+# - name: ghcr-credentials
+
+# -- Global image pull policy. Override per-operator if needed.
+imagePullPolicy: Always
+
+# -- Per-operator configuration.
+# Set enabled: true for operators that should run on this cluster.
+operators:
+  kubernetes:
+    # lab-kubernetes runs on BOTH control and compute clusters.
+    enabled: true
+    image: ghcr.io/ink-logic/lab-kubernetes
+    tag: latest
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    env:
+      - name: DOTNET_ENVIRONMENT
+        value: "Production"
+      - name: ASPNETCORE_URLS
+        value: "http://+:8080"
+      - name: Logging__LogLevel__Default
+        value: "Information"
+      - name: Logging__LogLevel__KubeOps
+        value: "Information"
+
+  github:
+    # lab-github runs on the CONTROL cluster only.
+    enabled: false
+    image: ghcr.io/ink-logic/lab-github
+    tag: latest
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 300m
+        memory: 256Mi
+    env:
+      - name: DOTNET_ENVIRONMENT
+        value: "Production"
+      - name: ASPNETCORE_URLS
+        value: "http://+:8080"
+      - name: Logging__LogLevel__Default
+        value: "Information"
+      - name: Logging__LogLevel__KubeOps
+        value: "Information"
+
+  discord:
+    # lab-discord runs on the CONTROL cluster only.
+    enabled: false
+    image: ghcr.io/ink-logic/lab-discord
+    tag: latest
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+    env:
+      - name: DOTNET_ENVIRONMENT
+        value: "Production"
+      - name: ASPNETCORE_URLS
+        value: "http://+:8080"
+      - name: Logging__LogLevel__Default
+        value: "Information"
+      - name: Logging__LogLevel__KubeOps
+        value: "Information"
+
+  postgres:
+    # lab-postgres runs on COMPUTE clusters only.
+    enabled: false
+    image: ghcr.io/ink-logic/lab-postgres
+    tag: latest
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+    env:
+      - name: DOTNET_ENVIRONMENT
+        value: "Production"
+      - name: ASPNETCORE_URLS
+        value: "http://+:8080"
+      - name: Logging__LogLevel__Default
+        value: "Information"

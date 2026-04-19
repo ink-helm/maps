@@ -1,0 +1,46 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: databases.postgres.lab.inklogic.tech
+spec:
+  group: postgres.lab.inklogic.tech
+  names:
+    kind: Database
+    listKind: DatabaseList
+    plural: databases
+    singular: database
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              forcePasswordReset:
+                format: int32
+                type: integer
+              backups:
+                items:
+                  properties:
+                    schedule:
+                      type: string
+                    retention:
+                      type: string
+                    include:
+                      items:
+                        type: string
+                      nullable: true
+                      type: array
+                    exclude:
+                      items:
+                        type: string
+                      nullable: true
+                      type: array
+                  type: object
+                nullable: true
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true

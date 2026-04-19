@@ -1,0 +1,71 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: deploymenttargets.kubernetes.lab.inklogic.tech
+spec:
+  group: kubernetes.lab.inklogic.tech
+  names:
+    kind: DeploymentTarget
+    listKind: DeploymentTargetList
+    plural: deploymenttargets
+    singular: deploymenttarget
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          status:
+            properties:
+              distributionBundleCreated:
+                type: boolean
+              conditions:
+                items:
+                  properties:
+                    type:
+                      type: string
+                    status:
+                      type: string
+                    reason:
+                      type: string
+                    message:
+                      type: string
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                  type: object
+                type: array
+              lastReconciledAt:
+                format: date-time
+                nullable: true
+                type: string
+              message:
+                nullable: true
+                type: string
+              phase:
+                enum:
+                - Pending
+                - Provisioning
+                - Ready
+                - Failed
+                - Deleting
+                type: string
+              failureCount:
+                format: int32
+                type: integer
+              lastAttemptedAt:
+                format: date-time
+                nullable: true
+                type: string
+              lastCleanupMessage:
+                nullable: true
+                type: string
+            type: object
+          spec:
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

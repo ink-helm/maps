@@ -1,0 +1,62 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: backups.postgres.lab.inklogic.tech
+spec:
+  group: postgres.lab.inklogic.tech
+  names:
+    kind: Backup
+    listKind: BackupList
+    plural: backups
+    singular: backup
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          status:
+            properties:
+              backupLocation:
+                nullable: true
+                type: string
+              phase:
+                enum:
+                - Pending
+                - Running
+                - Succeeded
+                - Failed
+                - Expired
+                type: string
+              completedAt:
+                format: date-time
+                nullable: true
+                type: string
+              message:
+                nullable: true
+                type: string
+            type: object
+          spec:
+            properties:
+              createdDateTime:
+                format: date-time
+                type: string
+              expiryDateTime:
+                format: date-time
+                type: string
+              include:
+                items:
+                  type: string
+                nullable: true
+                type: array
+              exclude:
+                items:
+                  type: string
+                nullable: true
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

@@ -1,0 +1,12 @@
+# lab-crds values
+#
+# This chart contains only CRD manifests (in crds/).
+# Helm installs the crds/ directory before any templated resources,
+# making this chart safe for first-install and upgrade ordering.
+#
+# No values are required for CRD installation.
+# This file exists to satisfy Helm chart conventions and future extensibility.
+
+# -- Chart metadata (informational only)
+chart:
+  description: "Lab CRDs chart — all API groups"

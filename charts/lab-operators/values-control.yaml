@@ -1,0 +1,22 @@
+# values-control.yaml
+# Override values for the CONTROL cluster deployment.
+# Enables: lab-kubernetes, lab-github, lab-discord
+# Disables: lab-postgres
+#
+# Usage:
+#   helm upgrade --install lab-operators inkhelm/lab-operators \
+#     --version <published-version> \
+#     -f helm-src/lab-operators/values-control.yaml
+
+operators:
+  kubernetes:
+    enabled: true
+
+  github:
+    enabled: true
+
+  discord:
+    enabled: true
+
+  postgres:
+    enabled: false

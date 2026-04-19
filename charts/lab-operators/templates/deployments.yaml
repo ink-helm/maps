@@ -1,0 +1,291 @@
+{{/*
+deployments.yaml — Deployment + Service for each enabled operator.
+*/}}
+
+{{- if .Values.operators.kubernetes.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-kubernetes
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab-kubernetes
+    app.kubernetes.io/component: operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "lab-operators.selectorLabels" (dict "name" "lab-kubernetes") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "lab-operators.labels" . | nindent 8 }}
+        {{- include "lab-operators.selectorLabels" (dict "name" "lab-kubernetes") | nindent 8 }}
+    spec:
+      serviceAccountName: lab-kubernetes
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- include "lab-operators.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: operator
+          image: "{{ .Values.operators.kubernetes.image }}:{{ .Values.operators.kubernetes.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          env:
+            {{- toYaml .Values.operators.kubernetes.env | nindent 12 }}
+          livenessProbe:
+            {{- include "lab-operators.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "lab-operators.readinessProbe" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.operators.kubernetes.resources | nindent 12 }}
+          securityContext:
+            {{- include "lab-operators.containerSecurityContext" . | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab-kubernetes
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab-kubernetes
+spec:
+  selector:
+    {{- include "lab-operators.selectorLabels" (dict "name" "lab-kubernetes") | nindent 4 }}
+  ports:
+    - name: health
+      port: 8080
+      targetPort: health
+{{- end }}
+
+{{- if .Values.operators.github.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-github
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab-github
+    app.kubernetes.io/component: operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "lab-operators.selectorLabels" (dict "name" "lab-github") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "lab-operators.labels" . | nindent 8 }}
+        {{- include "lab-operators.selectorLabels" (dict "name" "lab-github") | nindent 8 }}
+    spec:
+      serviceAccountName: lab-github
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- include "lab-operators.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: operator
+          image: "{{ .Values.operators.github.image }}:{{ .Values.operators.github.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          env:
+            {{- toYaml .Values.operators.github.env | nindent 12 }}
+          livenessProbe:
+            {{- include "lab-operators.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "lab-operators.readinessProbe" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.operators.github.resources | nindent 12 }}
+          securityContext:
+            {{- include "lab-operators.containerSecurityContext" . | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab-github
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab-github
+spec:
+  selector:
+    {{- include "lab-operators.selectorLabels" (dict "name" "lab-github") | nindent 4 }}
+  ports:
+    - name: health
+      port: 8080
+      targetPort: health
+{{- end }}
+
+{{- if .Values.operators.discord.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-discord
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab-discord
+    app.kubernetes.io/component: operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "lab-operators.selectorLabels" (dict "name" "lab-discord") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "lab-operators.labels" . | nindent 8 }}
+        {{- include "lab-operators.selectorLabels" (dict "name" "lab-discord") | nindent 8 }}
+    spec:
+      serviceAccountName: lab-discord
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- include "lab-operators.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: operator
+          image: "{{ .Values.operators.discord.image }}:{{ .Values.operators.discord.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          env:
+            {{- toYaml .Values.operators.discord.env | nindent 12 }}
+          livenessProbe:
+            {{- include "lab-operators.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "lab-operators.readinessProbe" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.operators.discord.resources | nindent 12 }}
+          securityContext:
+            {{- include "lab-operators.containerSecurityContext" . | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab-discord
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab-discord
+spec:
+  selector:
+    {{- include "lab-operators.selectorLabels" (dict "name" "lab-discord") | nindent 4 }}
+  ports:
+    - name: health
+      port: 8080
+      targetPort: health
+{{- end }}
+
+{{- if .Values.operators.postgres.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-postgres
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab-postgres
+    app.kubernetes.io/component: operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "lab-operators.selectorLabels" (dict "name" "lab-postgres") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "lab-operators.labels" . | nindent 8 }}
+        {{- include "lab-operators.selectorLabels" (dict "name" "lab-postgres") | nindent 8 }}
+    spec:
+      serviceAccountName: lab-postgres
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- include "lab-operators.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: operator
+          image: "{{ .Values.operators.postgres.image }}:{{ .Values.operators.postgres.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          env:
+            {{- toYaml .Values.operators.postgres.env | nindent 12 }}
+          livenessProbe:
+            {{- include "lab-operators.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "lab-operators.readinessProbe" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.operators.postgres.resources | nindent 12 }}
+          securityContext:
+            {{- include "lab-operators.containerSecurityContext" . | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab-postgres
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab-postgres
+spec:
+  selector:
+    {{- include "lab-operators.selectorLabels" (dict "name" "lab-postgres") | nindent 4 }}
+  ports:
+    - name: health
+      port: 8080
+      targetPort: health
+{{- end }}

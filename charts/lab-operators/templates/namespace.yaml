@@ -1,0 +1,10 @@
+{{/*
+namespace.yaml — creates the lab-system namespace.
+*/}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Values.namespace }}

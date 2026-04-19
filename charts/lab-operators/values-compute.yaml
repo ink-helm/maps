@@ -1,0 +1,22 @@
+# values-compute.yaml
+# Override values for COMPUTE cluster deployments.
+# Enables: lab-kubernetes, lab-postgres
+# Disables: lab-github, lab-discord
+#
+# Usage:
+#   helm upgrade --install lab-operators inkhelm/lab-operators \
+#     --version <published-version> \
+#     -f helm-src/lab-operators/values-compute.yaml
+
+operators:
+  kubernetes:
+    enabled: true
+
+  github:
+    enabled: false
+
+  discord:
+    enabled: false
+
+  postgres:
+    enabled: true
