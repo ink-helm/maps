@@ -1,6 +1,11 @@
 {{/*
 namespace.yaml — creates the lab-system namespace.
+
+The namespace is created during "pre-install" hook to ensure it exists before
+other resources are deployed. Set createNamespace: false to manage the namespace
+separately or if it already exists with proper Helm ownership metadata.
 */}}
+{{- if .Values.createNamespace }}
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -8,3 +13,7 @@ metadata:
   labels:
     {{- include "lab-operators.labels" . | nindent 4 }}
     app.kubernetes.io/name: {{ .Values.namespace }}
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "-5"
+{{- end }}

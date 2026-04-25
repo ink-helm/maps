@@ -35,6 +35,12 @@
 # -- Namespace where all operator pods and RBAC resources are deployed.
 namespace: lab-system
 
+# -- Namespace creation is owned by the lab-crds chart (via --create-namespace).
+# lab-operators must NOT create the namespace — it always deploys into a
+# namespace already owned by lab-crds or managed externally.
+# Only set true if deploying lab-operators WITHOUT lab-crds (rare, unsupported path).
+createNamespace: false
+
 # -- Global image pull secrets (list of secret names in the operator namespace).
 imagePullSecrets: []
 # - name: ghcr-credentials
