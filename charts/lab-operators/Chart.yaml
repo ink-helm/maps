@@ -6,8 +6,8 @@ description: >
   for the lab-kubernetes, lab-github, lab-discord, and lab-postgres operators.
   Requires the lab-crds chart to be installed first.
 type: application
-version: 2026.4.221
-appVersion: "317066e"
+version: 2026.4.286
+appVersion: "95ce57e"
 keywords:
   - lab
   - operators
