@@ -5,8 +5,8 @@ description: >
   Contains all shared and operator-owned CRDs across all API groups.
   This chart must be installed before lab-operators on every cluster.
 type: application
-version: 2026.4.205
-appVersion: "4fc43be"
+version: 2026.4.221
+appVersion: "317066e"
 keywords:
   - lab
   - operators

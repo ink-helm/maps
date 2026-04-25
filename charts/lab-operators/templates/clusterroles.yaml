@@ -92,20 +92,25 @@ rules:
     resources: ["secrets"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
-  # ServiceAccounts — managed by ApplicationController for workload identity
+  # ServiceAccounts — managed by ApplicationController for workload identity (delete on app removal)
   - apiGroups: [""]
     resources: ["serviceaccounts"]
-    verbs: ["get", "create", "update"]
+    verbs: ["get", "create", "update", "delete"]
 
-  # Deployments — managed by ApplicationController for workload reconciliation
+  # Deployments — managed by ApplicationController for workload reconciliation (delete on app removal)
   - apiGroups: ["apps"]
     resources: ["deployments"]
-    verbs: ["get", "create", "update"]
+    verbs: ["get", "create", "update", "delete"]
 
-  # HorizontalPodAutoscalers — managed by ApplicationController for scaling
+  # HorizontalPodAutoscalers — managed by ApplicationController for scaling (delete on app removal)
   - apiGroups: ["autoscaling"]
     resources: ["horizontalpodautoscalers"]
-    verbs: ["get", "create", "update"]
+    verbs: ["get", "create", "update", "delete"]
+
+  # Kuma mesh resources — managed by ApplicationController for service mesh registration (delete on app removal)
+  - apiGroups: ["kuma.io"]
+    resources: ["meshservices", "meshhttproutes"]
+    verbs: ["get", "create", "update", "delete"]
 
   # Events
   - apiGroups: [""]
