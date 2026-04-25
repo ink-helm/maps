@@ -30,6 +30,11 @@ rules:
       - deploymenttargets
     verbs: ["get", "list", "watch", "update", "patch"]
 
+  # OrganizationPrimer delete — cleanup/delete path
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["organizationprimers"]
+    verbs: ["delete"]
+
   # Shadow CRDs owned by the Kubernetes operator
   - apiGroups: ["kubernetes.lab.inklogic.tech"]
     resources: ["*"]
@@ -38,6 +43,16 @@ rules:
   # Tech provider CRDs watched by this operator
   - apiGroups: ["kubernetes.lab.inklogic.tech", "postgres.lab.inklogic.tech"]
     resources: ["clusters", "postgres"]
+    verbs: ["get", "list", "watch"]
+
+  # Application CRDs — watched by ApplicationController
+  - apiGroups: ["product.lab.inklogic.tech"]
+    resources: ["applications"]
+    verbs: ["get", "list", "watch"]
+
+  # Database CRDs — watched by DatabaseController
+  - apiGroups: ["postgres.lab.inklogic.tech"]
+    resources: ["databases"]
     verbs: ["get", "list", "watch"]
 
   # Fleet resources
@@ -57,10 +72,40 @@ rules:
       - roletemplates
     verbs: ["get", "list", "watch", "create", "update", "patch"]
 
+  # Rancher cluster registration tokens — read by KubernetesClusterController for cluster import
+  - apiGroups: ["management.cattle.io"]
+    resources: ["clusterregistrationtokens"]
+    verbs: ["get", "list"]
+
+  # Rancher provisioning clusters — managed by KubernetesClusterController
+  - apiGroups: ["provisioning.cattle.io"]
+    resources: ["clusters"]
+    verbs: ["get", "list", "create", "update", "delete"]
+
   # Core Kubernetes resources
   - apiGroups: [""]
-    resources: ["namespaces", "secrets", "configmaps"]
+    resources: ["namespaces", "configmaps"]
     verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+  # Secrets — create/update/patch/delete for credential management and cleanup
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # ServiceAccounts — managed by ApplicationController for workload identity
+  - apiGroups: [""]
+    resources: ["serviceaccounts"]
+    verbs: ["get", "create", "update"]
+
+  # Deployments — managed by ApplicationController for workload reconciliation
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "create", "update"]
+
+  # HorizontalPodAutoscalers — managed by ApplicationController for scaling
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "create", "update"]
 
   # Events
   - apiGroups: [""]
