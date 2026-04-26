@@ -134,12 +134,24 @@ rules:
   - apiGroups: ["lab.inklogic.tech"]
     resources:
       - organizations
+      - organizationprimers
       - accounts
       - teams
       - members
       - products
       - firefighters
     verbs: ["get", "list", "watch", "update", "patch"]
+
+  # OrganizationPrimer shadow CRD — explicit rules (also covered by wildcard below)
+  - apiGroups: ["github.lab.inklogic.tech"]
+    resources:
+      - organizationprimers
+    verbs: ["get", "create", "patch", "delete"]
+
+  - apiGroups: ["github.lab.inklogic.tech"]
+    resources:
+      - organizationprimers/status
+    verbs: ["get", "update", "patch"]
 
   # Github provider CRD — full access (owned by this operator)
   - apiGroups: ["github.lab.inklogic.tech"]
