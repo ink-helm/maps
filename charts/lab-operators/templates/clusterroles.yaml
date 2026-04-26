@@ -70,6 +70,7 @@ rules:
       - projects
       - projectroletemplatebindings
       - roletemplates
+      - fleetworkspaces
     verbs: ["get", "list", "watch", "create", "update", "patch"]
 
   # Rancher cluster registration tokens — read by KubernetesClusterController for cluster import
