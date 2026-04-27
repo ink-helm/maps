@@ -15,6 +15,44 @@ spec:
     schema:
       openAPIV3Schema:
         properties:
+          status:
+            properties:
+              conditions:
+                items:
+                  properties:
+                    type:
+                      type: string
+                    status:
+                      type: string
+                    reason:
+                      type: string
+                    message:
+                      type: string
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                  type: object
+                type: array
+              lastAttemptedAt:
+                format: date-time
+                nullable: true
+                type: string
+              lastReconciledAt:
+                format: date-time
+                nullable: true
+                type: string
+              message:
+                nullable: true
+                type: string
+              phase:
+                enum:
+                - Pending
+                - Provisioning
+                - Ready
+                - Failed
+                - Deleting
+                type: string
+            type: object
           spec:
             properties:
               account:
@@ -42,3 +80,5 @@ spec:
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
