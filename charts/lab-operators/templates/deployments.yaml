@@ -218,6 +218,78 @@ spec:
       targetPort: health
 {{- end }}
 
+{{- if .Values.operators.lab.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab
+    app.kubernetes.io/component: operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "lab-operators.selectorLabels" (dict "name" "lab") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "lab-operators.labels" . | nindent 8 }}
+        {{- include "lab-operators.selectorLabels" (dict "name" "lab") | nindent 8 }}
+    spec:
+      serviceAccountName: lab
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- include "lab-operators.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: operator
+          image: "{{ .Values.operators.lab.image }}:{{ .Values.operators.lab.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          env:
+            {{- toYaml .Values.operators.lab.env | nindent 12 }}
+          livenessProbe:
+            {{- include "lab-operators.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "lab-operators.readinessProbe" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.operators.lab.resources | nindent 12 }}
+          securityContext:
+            {{- include "lab-operators.containerSecurityContext" . | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab
+spec:
+  selector:
+    {{- include "lab-operators.selectorLabels" (dict "name" "lab") | nindent 4 }}
+  ports:
+    - name: health
+      port: 8080
+      targetPort: health
+{{- end }}
+
 {{- if .Values.operators.postgres.enabled }}
 ---
 apiVersion: apps/v1

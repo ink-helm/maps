@@ -1,6 +1,6 @@
 # values-control.yaml
 # Override values for the CONTROL cluster deployment.
-# Enables: lab-kubernetes, lab-github, lab-discord
+# Enables: lab-kubernetes, lab-github, lab-discord, lab
 # Disables: lab-postgres
 #
 # Usage:
@@ -20,3 +20,6 @@ operators:
 
   postgres:
     enabled: false
+
+  lab:
+    enabled: true

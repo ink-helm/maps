@@ -145,3 +145,27 @@ operators:
         value: "Information"
       - name: Logging__LogLevel__KubeOps
         value: "Information"
+
+  lab:
+    # lab runs on BOTH control and compute clusters.
+    # It owns Core CRD finalizers and aggregates shadow status from all tech operators.
+    # Deploy alongside whichever tech operators are enabled on the cluster.
+    enabled: true
+    image: ghcr.io/ink-logic/lab
+    tag: latest
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+    env:
+      - name: DOTNET_ENVIRONMENT
+        value: "Production"
+      - name: ASPNETCORE_URLS
+        value: "http://+:8080"
+      - name: Logging__LogLevel__Default
+        value: "Information"
+      - name: Logging__LogLevel__KubeOps
+        value: "Information"

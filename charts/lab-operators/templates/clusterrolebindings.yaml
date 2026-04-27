@@ -77,3 +77,22 @@ subjects:
     name: lab-postgres
     namespace: {{ .Values.namespace }}
 {{- end }}
+
+{{- if .Values.operators.lab.enabled }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: lab
+  labels:
+    {{- include "lab-operators.labels" . | nindent 4 }}
+    app.kubernetes.io/name: lab
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: lab
+subjects:
+  - kind: ServiceAccount
+    name: lab
+    namespace: {{ .Values.namespace }}
+{{- end }}

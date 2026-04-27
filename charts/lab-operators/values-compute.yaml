@@ -1,6 +1,6 @@
 # values-compute.yaml
 # Override values for COMPUTE cluster deployments.
-# Enables: lab-kubernetes, lab-postgres
+# Enables: lab-kubernetes, lab-postgres, lab
 # Disables: lab-github, lab-discord
 #
 # Usage:
@@ -19,4 +19,7 @@ operators:
     enabled: false
 
   postgres:
+    enabled: true
+
+  lab:
     enabled: true
