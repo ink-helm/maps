@@ -123,6 +123,25 @@ rules:
     resources: ["meshservices", "meshhttproutes"]
     verbs: ["get", "create", "update", "delete"]
 
+  # OperatorRegistration — create/update own registration at startup
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["operatorregistrations"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+  # Shared lab.inklogic.tech Shadow CRD — full access
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
+    verbs: ["get", "update", "patch"]
+
+  # KubeOps leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
   # Events
   - apiGroups: [""]
     resources: ["events"]
@@ -184,10 +203,29 @@ rules:
     resources: ["operatorregistrations"]
     verbs: ["get", "create", "update", "patch"]
 
+  # Shared lab.inklogic.tech Shadow CRD — full access for shadow lifecycle management
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
+    verbs: ["get", "update", "patch"]
+
+  # OperatorRegistration — create/update own registration at startup
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["operatorregistrations"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
   # Secrets — reading GitHub credentials and provider config
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "list", "watch"]
+
+  # KubeOps leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
   # Events
   - apiGroups: [""]
@@ -237,15 +275,20 @@ rules:
     resources: ["shadows/status"]
     verbs: ["get", "update", "patch"]
 
-  # OperatorRegistration — bootstrap access only
+  # OperatorRegistration — create/update own registration at startup
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
-    verbs: ["get", "create", "update", "patch"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
 
   # Secrets — reading Discord bot token and provider config
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "list", "watch"]
+
+  # KubeOps leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
   # Events
   - apiGroups: [""]
@@ -304,10 +347,23 @@ rules:
       - deploymenttargets/status
     verbs: ["get", "update", "patch"]
 
-  # Shared Shadow CRD — full access (Lab operator creates/manages shadows)
+  # Core lab.inklogic.tech Shadow CRD — full access (Lab operator writes shadows for aggregation)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["shadows"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
+    verbs: ["get", "update", "patch"]
+
+  # Shadow CRDs from tech operators — read-only for status aggregation
+  - apiGroups:
+      - "github.lab.inklogic.tech"
+      - "discord.lab.inklogic.tech"
+      - "kubernetes.lab.inklogic.tech"
+      - "postgres.lab.inklogic.tech"
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
 
   # Shared Shadow CRD — status sub-resource for status writes
   - apiGroups: ["lab.inklogic.tech"]
@@ -318,6 +374,11 @@ rules:
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
     verbs: ["get", "create", "update", "patch"]
+
+  # KubeOps leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
   # Events
   - apiGroups: [""]
@@ -361,6 +422,20 @@ rules:
       - backups
       - restores
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Shared lab.inklogic.tech Shadow CRD — full access for shadow lifecycle management
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
+    verbs: ["get", "update", "patch"]
+
+  # OperatorRegistration — create/update own registration at startup
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["operatorregistrations"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
 
   # Postgres CRD status sub-resources
   - apiGroups: ["postgres.lab.inklogic.tech"]
