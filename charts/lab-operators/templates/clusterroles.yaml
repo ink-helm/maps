@@ -35,14 +35,24 @@ rules:
     resources: ["organizationprimers"]
     verbs: ["delete"]
 
-  # Shadow CRDs owned by the Kubernetes operator
-  - apiGroups: ["kubernetes.lab.inklogic.tech"]
-    resources: ["*"]
+  # Shared Shadow CRD — full access (Kubernetes operator creates/manages shadows)
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Shared Shadow CRD — status sub-resource for status writes
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
+    verbs: ["get", "update", "patch"]
+
+  # OperatorRegistration — bootstrap access only
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["operatorregistrations"]
+    verbs: ["get", "create", "update", "patch"]
 
   # Tech provider CRDs watched by this operator
   - apiGroups: ["kubernetes.lab.inklogic.tech", "postgres.lab.inklogic.tech"]
-    resources: ["clusters", "postgres"]
+    resources: ["clusters", "ranchers", "postgres"]
     verbs: ["get", "list", "watch"]
 
   # Application CRDs — watched by ApplicationController
@@ -117,12 +127,17 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch"]
+
+  # KubeOps leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 
 {{- if .Values.operators.github.enabled }}
 ---
 # ClusterRole for lab-github
-# Needs: core lab.inklogic.tech CRDs (watch + finalizer), github.lab.inklogic.tech (full), secrets.
+# Needs: core lab.inklogic.tech CRDs (watch + finalizer), github.lab.inklogic.tech (explicit), secrets.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -143,21 +158,31 @@ rules:
       - firefighters
     verbs: ["get", "list", "watch", "update", "patch"]
 
-  # OrganizationPrimer shadow CRD — explicit rules (also covered by wildcard below)
-  - apiGroups: ["github.lab.inklogic.tech"]
-    resources:
-      - organizationprimers
-    verbs: ["get", "create", "patch", "delete"]
+  # OrganizationPrimer delete — cleanup path
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["organizationprimers"]
+    verbs: ["delete"]
 
+  # GitHub provider CRD — full ownership (no wildcard; explicit resource only)
   - apiGroups: ["github.lab.inklogic.tech"]
     resources:
-      - organizationprimers/status
+      - githubs
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Shared Shadow CRD — full access (GitHub operator creates/manages shadows)
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Shared Shadow CRD — status sub-resource for status writes
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
     verbs: ["get", "update", "patch"]
 
-  # Github provider CRD — full access (owned by this operator)
-  - apiGroups: ["github.lab.inklogic.tech"]
-    resources: ["*"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # OperatorRegistration — bootstrap access only
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["operatorregistrations"]
+    verbs: ["get", "create", "update", "patch"]
 
   # Secrets — reading GitHub credentials and provider config
   - apiGroups: [""]
@@ -168,12 +193,17 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch"]
+
+  # KubeOps leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 
 {{- if .Values.operators.discord.enabled }}
 ---
 # ClusterRole for lab-discord
-# Needs: core lab.inklogic.tech CRDs (watch + finalizer), discord.lab.inklogic.tech (full), secrets.
+# Needs: core lab.inklogic.tech CRDs (watch + finalizer), discords CRD (explicit), secrets.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -192,10 +222,25 @@ rules:
       - firefighters
     verbs: ["get", "list", "watch", "update", "patch"]
 
-  # Discord provider CRD and shadow CRDs — full access
+  # Discord provider CRD — full ownership (explicit; no wildcard)
   - apiGroups: ["discord.lab.inklogic.tech"]
-    resources: ["*"]
+    resources: ["discords"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Shared Shadow CRD — full access (Discord operator creates/manages shadows)
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Shared Shadow CRD — status sub-resource for status writes
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
+    verbs: ["get", "update", "patch"]
+
+  # OperatorRegistration — bootstrap access only
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["operatorregistrations"]
+    verbs: ["get", "create", "update", "patch"]
 
   # Secrets — reading Discord bot token and provider config
   - apiGroups: [""]
@@ -206,13 +251,18 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch"]
+
+  # KubeOps leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 
 {{- if .Values.operators.lab.enabled }}
 ---
 # ClusterRole for lab
 # Needs: all Core lab.inklogic.tech CRDs (watch + finalizer + status update),
-#        Shadow CRDs (read for aggregation), OperatorRegistration (read),
+#        Shadow CRDs (full CRUD for shadow management), OperatorRegistration (bootstrap),
 #        core K8s events.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -254,24 +304,30 @@ rules:
       - deploymenttargets/status
     verbs: ["get", "update", "patch"]
 
-  # Shadow CRDs — read-only, used by status aggregation
-  - apiGroups:
-      - "github.lab.inklogic.tech"
-      - "discord.lab.inklogic.tech"
-      - "kubernetes.lab.inklogic.tech"
-      - "postgres.lab.inklogic.tech"
-    resources: ["*"]
-    verbs: ["get", "list", "watch"]
+  # Shared Shadow CRD — full access (Lab operator creates/manages shadows)
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
-  # OperatorRegistration — read to populate the in-memory registry
+  # Shared Shadow CRD — status sub-resource for status writes
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
+    verbs: ["get", "update", "patch"]
+
+  # OperatorRegistration — bootstrap access only
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get", "create", "update", "patch"]
 
   # Events
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch"]
+
+  # KubeOps leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 
 {{- if .Values.operators.postgres.enabled }}
@@ -298,18 +354,58 @@ rules:
 
   # Postgres provider and tech CRDs — full ownership
   - apiGroups: ["postgres.lab.inklogic.tech"]
-    resources: ["*"]
+    resources:
+      - postgres
+      - clusters
+      - databases
+      - backups
+      - restores
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Postgres CRD status sub-resources
+  - apiGroups: ["postgres.lab.inklogic.tech"]
+    resources:
+      - postgres/status
+      - clusters/status
+      - databases/status
+      - backups/status
+      - restores/status
+    verbs: ["get", "update", "patch"]
+
+  # CNPG tech cluster CRD — managed by Postgres operator
+  - apiGroups: ["postgresql.cnpg.io"]
+    resources: ["clusters"]
+    verbs: ["get", "create", "update", "delete"]
 
   # S3 ObjectStore CRD
   - apiGroups: ["s3.lab.inklogic.tech"]
     resources: ["objectstores"]
     verbs: ["get", "list", "watch"]
 
+  # Shared Shadow CRD — full access (Postgres operator creates/manages shadows)
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Shared Shadow CRD — status sub-resource for status writes
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
+    verbs: ["get", "update", "patch"]
+
+  # OperatorRegistration — bootstrap access only
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["operatorregistrations"]
+    verbs: ["get", "create", "update", "patch"]
+
   # Kubernetes Jobs — create backup/restore jobs
   - apiGroups: ["batch"]
     resources: ["jobs"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # Namespaces — read for namespace-scoped resource targeting
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "create"]
 
   # Secrets — reading DB credentials and provider config
   - apiGroups: [""]
@@ -325,4 +421,9 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch"]
+
+  # KubeOps leader election
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
