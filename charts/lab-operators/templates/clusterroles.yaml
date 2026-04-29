@@ -45,7 +45,7 @@ rules:
     resources: ["shadows/status"]
     verbs: ["get", "update", "patch"]
 
-  # OperatorRegistration — bootstrap access only
+  # OperatorRegistration — bootstrap write access (no watcher; lab operator watches this resource)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
     verbs: ["get", "create", "update", "patch"]
@@ -123,20 +123,6 @@ rules:
     resources: ["meshservices", "meshhttproutes"]
     verbs: ["get", "create", "update", "delete"]
 
-  # OperatorRegistration — create/update own registration at startup
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["operatorregistrations"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
-
-  # Shared lab.inklogic.tech Shadow CRD — full access
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows/status"]
-    verbs: ["get", "update", "patch"]
-
   # KubeOps leader election
   - apiGroups: ["coordination.k8s.io"]
     resources: ["leases"]
@@ -146,11 +132,6 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch"]
-
-  # KubeOps leader election
-  - apiGroups: ["coordination.k8s.io"]
-    resources: ["leases"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 
 {{- if .Values.operators.github.enabled }}
@@ -198,24 +179,10 @@ rules:
     resources: ["shadows/status"]
     verbs: ["get", "update", "patch"]
 
-  # OperatorRegistration — bootstrap access only
+  # OperatorRegistration — bootstrap write access (no watcher; lab operator watches this resource)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
     verbs: ["get", "create", "update", "patch"]
-
-  # Shared lab.inklogic.tech Shadow CRD — full access for shadow lifecycle management
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows/status"]
-    verbs: ["get", "update", "patch"]
-
-  # OperatorRegistration — create/update own registration at startup
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["operatorregistrations"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
 
   # Secrets — reading GitHub credentials and provider config
   - apiGroups: [""]
@@ -231,11 +198,6 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch"]
-
-  # KubeOps leader election
-  - apiGroups: ["coordination.k8s.io"]
-    resources: ["leases"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 
 {{- if .Values.operators.discord.enabled }}
@@ -275,10 +237,10 @@ rules:
     resources: ["shadows/status"]
     verbs: ["get", "update", "patch"]
 
-  # OperatorRegistration — create/update own registration at startup
+  # OperatorRegistration — bootstrap write access (no watcher; lab operator watches this resource)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
+    verbs: ["get", "create", "update", "patch"]
 
   # Secrets — reading Discord bot token and provider config
   - apiGroups: [""]
@@ -294,11 +256,6 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch"]
-
-  # KubeOps leader election
-  - apiGroups: ["coordination.k8s.io"]
-    resources: ["leases"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 
 {{- if .Values.operators.lab.enabled }}
@@ -365,15 +322,10 @@ rules:
     resources: ["*"]
     verbs: ["get", "list", "watch"]
 
-  # Shared Shadow CRD — status sub-resource for status writes
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows/status"]
-    verbs: ["get", "update", "patch"]
-
-  # OperatorRegistration — bootstrap access only
+  # OperatorRegistration — watcher + bootstrap write access
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
-    verbs: ["get", "create", "update", "patch"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
 
   # KubeOps leader election
   - apiGroups: ["coordination.k8s.io"]
@@ -384,11 +336,6 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch"]
-
-  # KubeOps leader election
-  - apiGroups: ["coordination.k8s.io"]
-    resources: ["leases"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 
 {{- if .Values.operators.postgres.enabled }}
@@ -432,10 +379,10 @@ rules:
     resources: ["shadows/status"]
     verbs: ["get", "update", "patch"]
 
-  # OperatorRegistration — create/update own registration at startup
+  # OperatorRegistration — bootstrap write access (no watcher; lab operator watches this resource)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
+    verbs: ["get", "create", "update", "patch"]
 
   # Postgres CRD status sub-resources
   - apiGroups: ["postgres.lab.inklogic.tech"]
@@ -456,21 +403,6 @@ rules:
   - apiGroups: ["s3.lab.inklogic.tech"]
     resources: ["objectstores"]
     verbs: ["get", "list", "watch"]
-
-  # Shared Shadow CRD — full access (Postgres operator creates/manages shadows)
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-
-  # Shared Shadow CRD — status sub-resource for status writes
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows/status"]
-    verbs: ["get", "update", "patch"]
-
-  # OperatorRegistration — bootstrap access only
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["operatorregistrations"]
-    verbs: ["get", "create", "update", "patch"]
 
   # Kubernetes Jobs — create backup/restore jobs
   - apiGroups: ["batch"]
