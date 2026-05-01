@@ -59,11 +59,9 @@ spec:
                 nullable: true
                 type: string
               tech:
-                additionalProperties:
-                  type: object
-                  x-kubernetes-preserve-unknown-fields: true
                 nullable: true
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
             type: object
           spec:
             properties:
