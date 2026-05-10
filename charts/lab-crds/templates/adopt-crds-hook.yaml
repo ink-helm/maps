@@ -1,0 +1,138 @@
+{{- /*
+Pre-upgrade hook: adopt any Lab CRDs that were installed from the previous
+crds/ directory path and therefore lack Helm release ownership metadata.
+
+Helm tracks resources via three annotations/labels:
+  - meta.helm.sh/release-name
+  - meta.helm.sh/release-namespace
+  - app.kubernetes.io/managed-by: Helm
+
+CRDs installed from the Helm `crds/` directory are never stamped with these,
+so when templates/crds.yaml renders them as normal chart resources on the first
+upgrade, Helm sees them as pre-existing resources it does not own and may reject
+the upgrade with a "not managed by Helm" error.
+
+This Job runs as a pre-upgrade hook to annotate all Lab CRDs with the correct
+ownership metadata before Helm's template rendering phase. After adoption Helm
+can diff, patch, and track them normally.
+
+On a clean first install this hook is a no-op (the CRDs do not exist yet).
+*/ -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-crd-adopter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-crd-adopter
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+rules:
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-crd-adopter
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Release.Name }}-crd-adopter
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-crd-adopter
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-crd-adopt
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 120
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-crd-adopt
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ .Release.Name }}-crd-adopter
+      containers:
+        - name: adopt
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              RELEASE="{{ .Release.Name }}"
+              NAMESPACE="{{ .Release.Namespace }}"
+
+              # Lab CRD groups to adopt
+              GROUPS="
+                lab.inklogic.tech
+                kubernetes.lab.inklogic.tech
+                github.lab.inklogic.tech
+                discord.lab.inklogic.tech
+                postgres.lab.inklogic.tech
+                s3.lab.inklogic.tech
+                product.lab.inklogic.tech
+              "
+
+              adopted=0
+              skipped=0
+
+              for group in $GROUPS; do
+                crds=$(kubectl get crd -o name 2>/dev/null | grep "\.${group}$" || true)
+                for crd in $crds; do
+                  # Check if already managed by Helm (skip if already adopted)
+                  managed=$(kubectl get "$crd" \
+                    -o jsonpath='{.metadata.labels.app\.kubernetes\.io/managed-by}' 2>/dev/null || true)
+                  if [ "$managed" = "Helm" ]; then
+                    echo "Already managed by Helm: $crd — skipping"
+                    skipped=$((skipped + 1))
+                    continue
+                  fi
+
+                  echo "Adopting $crd into release ${RELEASE}..."
+                  kubectl annotate "$crd" \
+                    "meta.helm.sh/release-name=${RELEASE}" \
+                    "meta.helm.sh/release-namespace=${NAMESPACE}" \
+                    --overwrite
+                  kubectl label "$crd" \
+                    "app.kubernetes.io/managed-by=Helm" \
+                    --overwrite
+                  adopted=$((adopted + 1))
+                  echo "Adopted: $crd"
+                done
+              done
+
+              echo "Done. Adopted=${adopted} Skipped=${skipped}"

@@ -1,0 +1,14 @@
+{{- /*
+Render generated CRDs as normal chart resources so helm upgrade can
+reconcile schema changes for already-installed CRDs. The assembled chart
+stores generated YAML files under files/crds/<group>/*.yaml.
+
+Migration note: CRDs installed from the old Helm `crds/` directory path do
+not carry Helm ownership metadata. The adopt-crds-hook.yaml pre-upgrade hook
+stamps those CRDs with the correct release-name/release-namespace annotations
+and managed-by label so Helm can adopt and diff them on first upgrade.
+*/ -}}
+{{- range $path, $_ := .Files.Glob "files/crds/**/*.yaml" }}
+---
+{{ $.Files.Get $path }}
+{{- end }}

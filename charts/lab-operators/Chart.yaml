@@ -1,24 +1,27 @@
 apiVersion: v2
 name: lab-operators
-description: >
-  Runtime operator workloads for the Lab platform.
-  Deploys Deployments, Services, ServiceAccounts, ClusterRoles, and ClusterRoleBindings
-  for the lab-kubernetes, lab-github, lab-discord, and lab-postgres operators.
-  Requires the lab-crds chart to be installed first.
+description: 'Runtime operator workloads for the Lab platform. Deploys Deployments,
+  Services, ServiceAccounts, ClusterRoles, and ClusterRoleBindings for the lab-kubernetes,
+  lab-github, lab-discord, and lab-postgres operators. Requires the lab-crds chart
+  to be installed first.
+
+  '
 type: application
-version: 2026.5.552
-appVersion: "346bc5d"
+version: 2026.5.615
+appVersion: "36b015b"
 keywords:
-  - lab
-  - operators
-  - kubernetes
-  - inklogic
+- lab
+- operators
+- kubernetes
+- inklogic
 home: https://github.com/ink-logic/lab
 sources:
-  - https://github.com/ink-logic/lab
+- https://github.com/ink-logic/lab
 maintainers:
-  - name: ink-logic
-    url: https://github.com/ink-logic
+- name: ink-logic
+  url: https://github.com/ink-logic
 dependencies: []
 annotations:
   artifacthub.io/category: integration-delivery
+  lab.inklogic.tech/source-commit: 36b015b8f638bc3029747d80926119c1e655af46
+  lab.inklogic.tech/source-commit-short: 36b015b
