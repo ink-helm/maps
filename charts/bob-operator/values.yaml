@@ -29,7 +29,8 @@ image:
   tag: "latest"
   pullPolicy: Always
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: gh-ink
 nameOverride: ""
 fullnameOverride: ""
 

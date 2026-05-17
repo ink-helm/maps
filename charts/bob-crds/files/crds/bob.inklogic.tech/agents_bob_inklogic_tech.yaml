@@ -17,7 +17,7 @@ spec:
         properties:
           spec:
             properties:
-              ghSecretRef:
+              secretRef:
                 type: string
               harness:
                 type: string
