@@ -41,6 +41,13 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - pods
+  verbs:
+  - list
+  - delete
+- apiGroups:
+  - ""
+  resources:
   - events
   verbs:
   - get
@@ -63,6 +70,14 @@ rules:
   - batch
   resources:
   - jobs/status
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - pods/status
   verbs:
   - get
   - update
