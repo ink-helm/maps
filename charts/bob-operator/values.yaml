@@ -1,0 +1,69 @@
+# bob-operator default values
+#
+# ── Image versioning contract ─────────────────────────────────────────────────
+#
+# The operator image version is determined by:
+#   image.repository  — full image repository path
+#   image.tag         — image tag to deploy
+#
+# The Helm chart version (e.g. 2026.4.1234) and Chart.yaml appVersion are
+# INDEPENDENT of the operator image tag. appVersion is informational only and
+# records the git SHA at time of chart publication. Do NOT rely on appVersion
+# for deployment image selection.
+#
+# Docker image tags published by CI:
+#   main branch   : yyyy.m.d-<sha7>                  (e.g. 2026.4.20-abc1234)
+#   feature branch: yyyy.m.d-<branch-slug>-<sha7>    (e.g. 2026.4.20-feature-69-abc1234)
+#   release tag   : <semver without v>               (e.g. 1.2.3)
+#
+# To pin a specific image version at deploy time, set tag in your Fleet bundle
+# values or via --set at helm upgrade time:
+#
+#   image:
+#     tag: "2026.4.20-abc1234"
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+image:
+  repository: ghcr.io/ink-logic/bob-operator
+  tag: "latest"
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  name: ""
+
+replicaCount: 1
+
+podAnnotations: {}
+podLabels: {}
+
+resources: {}
+
+probes:
+  readiness:
+    path: /readyz
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+  liveness:
+    path: /healthz
+    initialDelaySeconds: 15
+    periodSeconds: 20
+    timeoutSeconds: 2
+    failureThreshold: 3
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+env:
+  bobOperatorGlobalAgentNamespace: bob
+
+githubSecret:
+  name: bob-github

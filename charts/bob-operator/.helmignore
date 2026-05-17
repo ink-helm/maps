@@ -1,0 +1,8 @@
+README*
+.git/
+.gitignore
+*.swp
+*.bak
+*.tmp
+*.orig
+Makefile

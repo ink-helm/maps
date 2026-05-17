@@ -1,0 +1,12 @@
+# bob-crds values
+#
+# This chart contains only CRD manifests assembled under files/crds/.
+# A template renders those generated files as normal chart resources so
+# helm upgrade can reconcile schema changes for already-installed CRDs.
+#
+# No values are required for CRD installation.
+# This file exists to satisfy Helm chart conventions and future extensibility.
+
+# -- Chart metadata (informational only)
+chart:
+  description: "Bob CRDs chart — bob.inklogic.tech API group"

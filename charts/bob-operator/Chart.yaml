@@ -1,0 +1,26 @@
+apiVersion: v2
+name: bob-operator
+description: 'Runtime operator workload for the Bob platform. Deploys the Deployment,
+  ServiceAccount, ClusterRole, and ClusterRoleBinding for the bob-operator. Requires
+  the bob-crds chart to be installed first.
+
+  '
+type: application
+version: 2026.5.16
+appVersion: "c5f15e0"
+keywords:
+- bob
+- operator
+- kubernetes
+- inklogic
+home: https://github.com/ink-logic/bob
+sources:
+- https://github.com/ink-logic/bob
+maintainers:
+- name: ink-logic
+  url: https://github.com/ink-logic
+dependencies: []
+annotations:
+  artifacthub.io/category: integration-delivery
+  bob.inklogic.tech/source-commit: c5f15e0772353c9d5e9b42d3abc52d6da86b1f01
+  bob.inklogic.tech/source-commit-short: c5f15e0

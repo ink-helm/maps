@@ -1,0 +1,25 @@
+apiVersion: v2
+name: bob-crds
+description: 'Custom Resource Definitions (CRDs) for the Bob operator. Contains all
+  CRDs for the bob.inklogic.tech API group. This chart must be installed before bob-operator
+  on every cluster.
+
+  '
+type: application
+version: 2026.5.16
+appVersion: "c5f15e0"
+keywords:
+- bob
+- operator
+- crds
+- inklogic
+home: https://github.com/ink-logic/bob
+sources:
+- https://github.com/ink-logic/bob
+maintainers:
+- name: ink-logic
+  url: https://github.com/ink-logic
+annotations:
+  artifacthub.io/category: integration-delivery
+  bob.inklogic.tech/source-commit: c5f15e0772353c9d5e9b42d3abc52d6da86b1f01
+  bob.inklogic.tech/source-commit-short: c5f15e0

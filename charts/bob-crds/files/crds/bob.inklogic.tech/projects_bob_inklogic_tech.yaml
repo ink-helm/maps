@@ -1,0 +1,44 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: projects.bob.inklogic.tech
+spec:
+  group: bob.inklogic.tech
+  names:
+    kind: Project
+    listKind: ProjectList
+    plural: projects
+    singular: project
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              org:
+                type: string
+              project:
+                type: string
+              workflow:
+                items:
+                  properties:
+                    lane:
+                      nullable: true
+                      type: string
+                    requiredLabels:
+                      items:
+                        type: string
+                      nullable: true
+                      type: array
+                    action:
+                      type: string
+                    agent:
+                      type: string
+                  type: object
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
