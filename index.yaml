@@ -1,5 +1,61 @@
 apiVersion: v1
 entries:
+  bob-crds:
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      bob.inklogic.tech/source-commit: c5f15e0772353c9d5e9b42d3abc52d6da86b1f01
+      bob.inklogic.tech/source-commit-short: c5f15e0
+    apiVersion: v2
+    appVersion: c5f15e0
+    created: "2026-05-17T00:33:10.143040053Z"
+    description: 'Custom Resource Definitions (CRDs) for the Bob operator. Contains
+      all CRDs for the bob.inklogic.tech API group. This chart must be installed before
+      bob-operator on every cluster. '
+    digest: 65b3da2e20edd21948fec8b46a9f363ea2376ad2a96f4aa6da8d3ad9e16e0a73
+    home: https://github.com/ink-logic/bob
+    keywords:
+    - bob
+    - operator
+    - crds
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: bob-crds
+    sources:
+    - https://github.com/ink-logic/bob
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/bob-crds-2026.5.16/bob-crds-2026.5.16.tgz
+    version: 2026.5.16
+  bob-operator:
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      bob.inklogic.tech/source-commit: c5f15e0772353c9d5e9b42d3abc52d6da86b1f01
+      bob.inklogic.tech/source-commit-short: c5f15e0
+    apiVersion: v2
+    appVersion: c5f15e0
+    created: "2026-05-17T00:33:10.281364881Z"
+    description: 'Runtime operator workload for the Bob platform. Deploys the Deployment,
+      ServiceAccount, ClusterRole, and ClusterRoleBinding for the bob-operator. Requires
+      the bob-crds chart to be installed first. '
+    digest: 6346cdd74ca94327086d8bb1b6cf956f8a75020e32a6e45e719b04b148e57eab
+    home: https://github.com/ink-logic/bob
+    keywords:
+    - bob
+    - operator
+    - kubernetes
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: bob-operator
+    sources:
+    - https://github.com/ink-logic/bob
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/bob-operator-2026.5.16/bob-operator-2026.5.16.tgz
+    version: 2026.5.16
   empty:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -835,4 +891,4 @@ entries:
     urls:
     - https://github.com/ink-helm/maps/releases/download/lab-operators-0.1.0-main.20260419220424.1ad30a3/lab-operators-0.1.0-main.20260419220424.1ad30a3.tgz
     version: 0.1.0-main.20260419220424.1ad30a3
-generated: "2026-05-10T23:47:18.785693091Z"
+generated: "2026-05-17T00:33:10.281514591Z"
