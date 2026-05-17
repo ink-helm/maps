@@ -6,8 +6,8 @@ description: 'Runtime operator workload for the Bob platform. Deploys the Deploy
 
   '
 type: application
-version: 2026.5.32
-appVersion: "2a4e03e"
+version: 2026.5.36
+appVersion: "be347ea"
 keywords:
 - bob
 - operator
@@ -22,5 +22,5 @@ maintainers:
 dependencies: []
 annotations:
   artifacthub.io/category: integration-delivery
-  bob.inklogic.tech/source-commit: 2a4e03e3c4c7082476036b2b95e777d10278e218
-  bob.inklogic.tech/source-commit-short: 2a4e03e
+  bob.inklogic.tech/source-commit: be347eafb40a2c0f61921c490a2704223bbc3b9a
+  bob.inklogic.tech/source-commit-short: be347ea
