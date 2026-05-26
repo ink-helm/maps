@@ -6,8 +6,8 @@ description: 'Custom Resource Definitions (CRDs) for the Bob operator. Contains 
 
   '
 type: application
-version: 2026.5.40
-appVersion: "b4370a4"
+version: 2026.5.53
+appVersion: "860d968"
 keywords:
 - bob
 - operator
@@ -21,5 +21,5 @@ maintainers:
   url: https://github.com/ink-logic
 annotations:
   artifacthub.io/category: integration-delivery
-  bob.inklogic.tech/source-commit: b4370a470e3ab609d45c7054824d5cda3cabcb0d
-  bob.inklogic.tech/source-commit-short: b4370a4
+  bob.inklogic.tech/source-commit: 860d9689926c4c033c2357af3f07982b2ef076e6
+  bob.inklogic.tech/source-commit-short: 860d968
