@@ -3,6 +3,33 @@ entries:
   bob-crds:
   - annotations:
       artifacthub.io/category: integration-delivery
+      bob.inklogic.tech/source-commit: 860d9689926c4c033c2357af3f07982b2ef076e6
+      bob.inklogic.tech/source-commit-short: 860d968
+    apiVersion: v2
+    appVersion: 860d968
+    created: "2026-05-26T00:34:09.65209639Z"
+    description: 'Custom Resource Definitions (CRDs) for the Bob operator. Contains
+      all CRDs for the bob.inklogic.tech API group. This chart must be installed before
+      bob-operator on every cluster. '
+    digest: e91a1ac4561900a20edb6e412f37433ff4165e9d412a250c7b1667e142d75cb6
+    home: https://github.com/ink-logic/bob
+    keywords:
+    - bob
+    - operator
+    - crds
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: bob-crds
+    sources:
+    - https://github.com/ink-logic/bob
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/bob-crds-2026.5.53/bob-crds-2026.5.53.tgz
+    version: 2026.5.53
+  - annotations:
+      artifacthub.io/category: integration-delivery
       bob.inklogic.tech/source-commit: b4370a470e3ab609d45c7054824d5cda3cabcb0d
       bob.inklogic.tech/source-commit-short: b4370a4
     apiVersion: v2
@@ -191,6 +218,33 @@ entries:
     - https://github.com/ink-helm/maps/releases/download/bob-crds-2026.5.16/bob-crds-2026.5.16.tgz
     version: 2026.5.16
   bob-operator:
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      bob.inklogic.tech/source-commit: 860d9689926c4c033c2357af3f07982b2ef076e6
+      bob.inklogic.tech/source-commit-short: 860d968
+    apiVersion: v2
+    appVersion: 860d968
+    created: "2026-05-26T00:34:09.800244817Z"
+    description: 'Runtime operator workload for the Bob platform. Deploys the Deployment,
+      ServiceAccount, ClusterRole, and ClusterRoleBinding for the bob-operator. Requires
+      the bob-crds chart to be installed first. '
+    digest: dab6b67bece475cecd3d29418770c4fe1f4cd14eea4bbfcc913e6e25dcbf727d
+    home: https://github.com/ink-logic/bob
+    keywords:
+    - bob
+    - operator
+    - kubernetes
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: bob-operator
+    sources:
+    - https://github.com/ink-logic/bob
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/bob-operator-2026.5.53/bob-operator-2026.5.53.tgz
+    version: 2026.5.53
   - annotations:
       artifacthub.io/category: integration-delivery
       bob.inklogic.tech/source-commit: b4370a470e3ab609d45c7054824d5cda3cabcb0d
@@ -1215,4 +1269,4 @@ entries:
     urls:
     - https://github.com/ink-helm/maps/releases/download/lab-operators-0.1.0-main.20260419220424.1ad30a3/lab-operators-0.1.0-main.20260419220424.1ad30a3.tgz
     version: 0.1.0-main.20260419220424.1ad30a3
-generated: "2026-05-17T22:39:15.481006702Z"
+generated: "2026-05-26T00:34:09.800454289Z"
