@@ -288,6 +288,11 @@ rules:
       - deploymenttargets
     verbs: ["get", "list", "watch", "update", "patch"]
 
+  # OrganizationPrimer delete — Lab initiates deletion once all shadows are Ready
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["organizationprimers"]
+    verbs: ["delete"]
+
   # Core CRD status subresource — required for status aggregation writes
   - apiGroups: ["lab.inklogic.tech"]
     resources:
