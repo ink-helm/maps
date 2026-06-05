@@ -23,6 +23,38 @@ spec:
                 type: string
               webhookSecretRef:
                 type: string
+              roleTemplates:
+                items:
+                  properties:
+                    name:
+                      type: string
+                    displayName:
+                      nullable: true
+                      type: string
+                    inheritFrom:
+                      items:
+                        type: string
+                      type: array
+                    rules:
+                      items:
+                        properties:
+                          apiGroups:
+                            items:
+                              type: string
+                            type: array
+                          resources:
+                            items:
+                              type: string
+                            type: array
+                          verbs:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      type: array
+                  type: object
+                nullable: true
+                type: array
             type: object
         type: object
     served: true
