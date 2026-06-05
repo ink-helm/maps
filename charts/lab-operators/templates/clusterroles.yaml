@@ -55,6 +55,11 @@ rules:
     resources: ["clusters", "ranchers", "postgres"]
     verbs: ["get", "list", "watch"]
 
+  # Github provider CRD — read by GitHubTeamIdResolver during Rancher binding reconciliation
+  - apiGroups: ["github.lab.inklogic.tech"]
+    resources: ["githubs"]
+    verbs: ["get", "list", "watch"]
+
   # Application CRDs — watched by ApplicationController
   - apiGroups: ["product.lab.inklogic.tech"]
     resources: ["applications"]
