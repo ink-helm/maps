@@ -7,8 +7,8 @@ description: 'Runtime operator workloads for the Lab platform. Deploys Deploymen
 
   '
 type: application
-version: 2026.6.981
-appVersion: "86481ce"
+version: 2026.6.993
+appVersion: "a66363b"
 keywords:
 - lab
 - operators
@@ -23,5 +23,5 @@ maintainers:
 dependencies: []
 annotations:
   artifacthub.io/category: integration-delivery
-  lab.inklogic.tech/source-commit: 86481cebe4cc3fc3f44f530c0dd2ca744e4a39cc
-  lab.inklogic.tech/source-commit-short: 86481ce
+  lab.inklogic.tech/source-commit: a66363ba15e75fb0c39c80899c41053c16db88f5
+  lab.inklogic.tech/source-commit-short: a66363b
