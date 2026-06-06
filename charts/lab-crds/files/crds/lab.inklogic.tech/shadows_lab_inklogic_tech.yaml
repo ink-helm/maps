@@ -11,7 +11,20 @@ spec:
     singular: shadow
   scope: Namespaced
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.name
+      name: Name
+      priority: 0
+      type: string
+    - jsonPath: .spec.kind
+      name: Kind
+      priority: 0
+      type: string
+    - jsonPath: .spec.area
+      name: Area
+      priority: 0
+      type: string
+    name: v1
     schema:
       openAPIV3Schema:
         properties:
