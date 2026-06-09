@@ -558,6 +558,33 @@ entries:
   lab-crds:
   - annotations:
       artifacthub.io/category: integration-delivery
+      lab.inklogic.tech/source-commit: 80b3e11a415474867cddd27df9290704359e71c7
+      lab.inklogic.tech/source-commit-short: 80b3e11
+    apiVersion: v2
+    appVersion: 80b3e11
+    created: "2026-06-09T20:16:55.711147633Z"
+    description: 'Custom Resource Definitions (CRDs) for the Lab operator platform.
+      Contains all shared and operator-owned CRDs across all API groups. This chart
+      must be installed before lab-operators on every cluster. '
+    digest: 58f37a7a317d1eae9905bb4bbc8feb785590fb0bdb2cdfd3d585c3bf999408d6
+    home: https://github.com/ink-logic/lab
+    keywords:
+    - lab
+    - operators
+    - crds
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: lab-crds
+    sources:
+    - https://github.com/ink-logic/lab
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/lab-crds-2026.6.1215/lab-crds-2026.6.1215.tgz
+    version: 2026.6.1215
+  - annotations:
+      artifacthub.io/category: integration-delivery
       lab.inklogic.tech/source-commit: ab621d0d867d5f745fa1876a833500767643219e
       lab.inklogic.tech/source-commit-short: ab621d0
     apiVersion: v2
@@ -1877,6 +1904,34 @@ entries:
     - https://github.com/ink-helm/maps/releases/download/lab-crds-0.1.0-main.20260419220424.1ad30a3/lab-crds-0.1.0-main.20260419220424.1ad30a3.tgz
     version: 0.1.0-main.20260419220424.1ad30a3
   lab-operators:
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      lab.inklogic.tech/source-commit: 80b3e11a415474867cddd27df9290704359e71c7
+      lab.inklogic.tech/source-commit-short: 80b3e11
+    apiVersion: v2
+    appVersion: 80b3e11
+    created: "2026-06-09T20:16:55.899034093Z"
+    description: 'Runtime operator workloads for the Lab platform. Deploys Deployments,
+      Services, ServiceAccounts, ClusterRoles, and ClusterRoleBindings for the lab-kubernetes,
+      lab-github, lab-discord, and lab-postgres operators. Requires the lab-crds chart
+      to be installed first. '
+    digest: 979d128cffa359a63fa9f573340cefbf284eddfc2e28f840fbc604456ce35b1b
+    home: https://github.com/ink-logic/lab
+    keywords:
+    - lab
+    - operators
+    - kubernetes
+    - inklogic
+    maintainers:
+    - name: ink-logic
+      url: https://github.com/ink-logic
+    name: lab-operators
+    sources:
+    - https://github.com/ink-logic/lab
+    type: application
+    urls:
+    - https://github.com/ink-helm/maps/releases/download/lab-operators-2026.6.1215/lab-operators-2026.6.1215.tgz
+    version: 2026.6.1215
   - annotations:
       artifacthub.io/category: integration-delivery
       lab.inklogic.tech/source-commit: ab621d0d867d5f745fa1876a833500767643219e
@@ -3247,4 +3302,4 @@ entries:
     urls:
     - https://github.com/ink-helm/maps/releases/download/lab-operators-0.1.0-main.20260419220424.1ad30a3/lab-operators-0.1.0-main.20260419220424.1ad30a3.tgz
     version: 0.1.0-main.20260419220424.1ad30a3
-generated: "2026-06-08T20:56:29.526298813Z"
+generated: "2026-06-09T20:16:55.899376067Z"
