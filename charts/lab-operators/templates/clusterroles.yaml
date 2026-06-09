@@ -70,33 +70,75 @@ rules:
     resources: ["databases"]
     verbs: ["get", "list", "watch"]
 
-  # Fleet resources
+  # Fleet bundles — upsert via CustomObjectUpsertHelper; delete on product/database cleanup
   - apiGroups: ["fleet.cattle.io"]
-    resources:
-      - bundles
-      - gitrepos
-      - bundlenamespacemappings
-      - clusters
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    resources: ["bundles"]
+    verbs: ["get", "create", "update", "delete"]
 
-  # Rancher management resources
+  # Fleet GitRepos — upsert via CustomObjectUpsertHelper; delete on product/deployment-target cleanup
+  - apiGroups: ["fleet.cattle.io"]
+    resources: ["gitrepos"]
+    verbs: ["get", "create", "update", "delete"]
+
+  # Fleet bundle namespace mappings — upsert only (Organization/Cloud/Team controllers)
+  - apiGroups: ["fleet.cattle.io"]
+    resources: ["bundlenamespacemappings"]
+    verbs: ["get", "create", "update"]
+
+  # Rancher projects — reconcile lifecycle (RancherProjectReconciliation)
   - apiGroups: ["management.cattle.io"]
-    resources:
-      - projects
-      - projectroletemplatebindings
-      - roletemplates
-      - fleetworkspaces
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
+    resources: ["projects"]
+    verbs: ["list", "create", "patch"]
 
-  # Rancher cluster registration tokens — read by KubernetesClusterController for cluster import
+  # Rancher projects — delete for account cleanup (AccountController.ReconcileDeletedAsync)
+  - apiGroups: ["management.cattle.io"]
+    resources: ["projects"]
+    verbs: ["delete"]
+
+  # Rancher project role bindings — reconcile lifecycle (RancherBindingApplicator)
+  - apiGroups: ["management.cattle.io"]
+    resources: ["projectroletemplatebindings"]
+    verbs: ["list", "create", "delete"]
+
+  # Rancher role templates — bootstrap and drift correction (RancherRoleTemplateApplicator)
+  - apiGroups: ["management.cattle.io"]
+    resources: ["roletemplates"]
+    verbs: ["get", "create", "update"]
+
+  # Rancher Fleet workspaces — idempotent bootstrap (FleetWorkspaceService)
+  - apiGroups: ["management.cattle.io"]
+    resources: ["fleetworkspaces"]
+    verbs: ["get", "create"]
+
+  # Rancher cluster role bindings — cluster-scoped RBAC (RancherClusterBindingApplicator)
+  - apiGroups: ["management.cattle.io"]
+    resources: ["clusterroletemplatebindings"]
+    verbs: ["list", "create", "delete"]
+
+  # Rancher management clusters — discovery for deployment-target filtering (RancherClusterCatalog)
+  - apiGroups: ["management.cattle.io"]
+    resources: ["clusters"]
+    verbs: ["list"]
+
+  # Rancher global roles — Fleet workspace read access bootstrap (FleetWorkspaceGlobalRoleApplicator)
+  - apiGroups: ["management.cattle.io"]
+    resources: ["globalroles"]
+    verbs: ["get", "create"]
+
+  # Rancher global role bindings — Fleet workspace team access (FleetWorkspaceBindingApplicator)
+  - apiGroups: ["management.cattle.io"]
+    resources: ["globalrolebindings"]
+    verbs: ["list", "create", "delete"]
+
+  # Rancher cluster registration tokens — targeted get of default-token (KubernetesClusterController)
   - apiGroups: ["management.cattle.io"]
     resources: ["clusterregistrationtokens"]
-    verbs: ["get", "list"]
+    verbs: ["get"]
 
-  # Rancher provisioning clusters — managed by KubernetesClusterController
+  # Rancher provisioning clusters — managed by KubernetesClusterController (no list path)
   - apiGroups: ["provisioning.cattle.io"]
     resources: ["clusters"]
-    verbs: ["get", "list", "create", "update", "delete"]
+    verbs: ["get", "create", "update", "patch", "delete"]
 
   # Core Kubernetes resources
   - apiGroups: [""]
