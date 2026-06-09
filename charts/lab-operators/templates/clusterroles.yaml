@@ -184,7 +184,7 @@ rules:
 {{- if .Values.operators.github.enabled }}
 ---
 # ClusterRole for lab-github
-# Needs: core lab.inklogic.tech CRDs (watch + finalizer), github.lab.inklogic.tech (explicit), secrets.
+# Needs: core lab.inklogic.tech CRDs (read-only watch), github.lab.inklogic.tech provider + shadow CRDs, secrets.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -193,7 +193,7 @@ metadata:
     {{- include "lab-operators.labels" . | nindent 4 }}
     app.kubernetes.io/name: lab-github
 rules:
-  # Core Lab CRDs — watch + finalizer management
+  # Core Lab CRDs — read-only watch (UseReadOnlyCoreWatch; no Core finalizer patches)
   - apiGroups: ["lab.inklogic.tech"]
     resources:
       - organizations
@@ -202,39 +202,45 @@ rules:
       - teams
       - members
       - products
-      - firefighters
-    verbs: ["get", "list", "watch", "update", "patch"]
+    verbs: ["get", "list", "watch"]
 
-  # OrganizationPrimer delete — cleanup path
+  # FireFighter CRD — watch + issue-driven grant/revoke lifecycle
   - apiGroups: ["lab.inklogic.tech"]
-    resources: ["organizationprimers"]
-    verbs: ["delete"]
+    resources: ["firefighters"]
+    verbs: ["get", "list", "watch", "create", "delete"]
 
-  # GitHub provider CRD — full ownership (no wildcard; explicit resource only)
+  # GitHub provider CRD — read-only watch
   - apiGroups: ["github.lab.inklogic.tech"]
-    resources:
-      - githubs
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    resources: ["githubs"]
+    verbs: ["get", "list", "watch"]
 
-  # Shared Shadow CRD — full access (GitHub operator creates/manages shadows)
+  # GithubShadow CRD — provider webhook reconciliation (GithubController)
+  - apiGroups: ["github.lab.inklogic.tech"]
+    resources: ["githubshadows"]
+    verbs: ["get", "create"]
+
+  - apiGroups: ["github.lab.inklogic.tech"]
+    resources: ["githubshadows/status"]
+    verbs: ["update"]
+
+  # Shared Shadow CRD — tech operator shadow lifecycle (GenericShadowService)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["shadows"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["get", "list", "create", "delete"]
 
-  # Shared Shadow CRD — status sub-resource for status writes
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["shadows/status"]
-    verbs: ["get", "update", "patch"]
+    verbs: ["update"]
 
   # OperatorRegistration — bootstrap write access (no watcher; lab operator watches this resource)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
-    verbs: ["get", "create", "update", "patch"]
+    verbs: ["get", "create", "update"]
 
   # Secrets — reading GitHub credentials and provider config
   - apiGroups: [""]
     resources: ["secrets"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get"]
 
   # KubeOps leader election
   - apiGroups: ["coordination.k8s.io"]
@@ -250,7 +256,7 @@ rules:
 {{- if .Values.operators.discord.enabled }}
 ---
 # ClusterRole for lab-discord
-# Needs: core lab.inklogic.tech CRDs (watch + finalizer), discords CRD (explicit), secrets.
+# Needs: core lab.inklogic.tech CRDs (read-only watch), discords CRD (read-only), secrets.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -259,7 +265,7 @@ metadata:
     {{- include "lab-operators.labels" . | nindent 4 }}
     app.kubernetes.io/name: lab-discord
 rules:
-  # Core Lab CRDs — watch + finalizer management
+  # Core Lab CRDs — read-only watch (UseReadOnlyCoreWatch; no Core finalizer patches)
   - apiGroups: ["lab.inklogic.tech"]
     resources:
       - organizations
@@ -267,32 +273,31 @@ rules:
       - teams
       - members
       - firefighters
-    verbs: ["get", "list", "watch", "update", "patch"]
+    verbs: ["get", "list", "watch"]
 
-  # Discord provider CRD — full ownership (explicit; no wildcard)
+  # Discord provider CRD — read-only watch
   - apiGroups: ["discord.lab.inklogic.tech"]
     resources: ["discords"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["get", "list", "watch"]
 
-  # Shared Shadow CRD — full access (Discord operator creates/manages shadows)
+  # Shared Shadow CRD — tech operator shadow lifecycle (GenericShadowService)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["shadows"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["get", "list", "create", "delete"]
 
-  # Shared Shadow CRD — status sub-resource for status writes
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["shadows/status"]
-    verbs: ["get", "update", "patch"]
+    verbs: ["update"]
 
   # OperatorRegistration — bootstrap write access (no watcher; lab operator watches this resource)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
-    verbs: ["get", "create", "update", "patch"]
+    verbs: ["get", "create", "update"]
 
   # Secrets — reading Discord bot token and provider config
   - apiGroups: [""]
     resources: ["secrets"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get"]
 
   # KubeOps leader election
   - apiGroups: ["coordination.k8s.io"]
@@ -308,9 +313,8 @@ rules:
 {{- if .Values.operators.lab.enabled }}
 ---
 # ClusterRole for lab
-# Needs: all Core lab.inklogic.tech CRDs (watch + finalizer + status update),
-#        Shadow CRDs (full CRUD for shadow management), OperatorRegistration (bootstrap),
-#        core K8s events.
+# Needs: all Core lab.inklogic.tech CRDs (watch + finalizer patch + status update),
+#        unified Shadow CRD (list/delete for aggregation), OperatorRegistration (watch-only).
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -319,7 +323,7 @@ metadata:
     {{- include "lab-operators.labels" . | nindent 4 }}
     app.kubernetes.io/name: lab
 rules:
-  # Core Lab CRDs — watch + finalizer management + status updates
+  # Core Lab CRDs — watch + finalizer patch (EntityFinalizerAttacher, legacy cleanup)
   - apiGroups: ["lab.inklogic.tech"]
     resources:
       - organizations
@@ -333,7 +337,7 @@ rules:
       - environments
       - zones
       - deploymenttargets
-    verbs: ["get", "list", "watch", "update", "patch"]
+    verbs: ["get", "list", "watch", "patch"]
 
   # OrganizationPrimer delete — Lab initiates deletion once all shadows are Ready
   - apiGroups: ["lab.inklogic.tech"]
@@ -354,30 +358,17 @@ rules:
       - environments/status
       - zones/status
       - deploymenttargets/status
-    verbs: ["get", "update", "patch"]
+    verbs: ["update"]
 
-  # Core lab.inklogic.tech Shadow CRD — full access (Lab operator writes shadows for aggregation)
+  # Unified Shadow CRD — list/delete for aggregation (tech operators create/update shadows)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["shadows"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["get", "list", "watch", "delete"]
 
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows/status"]
-    verbs: ["get", "update", "patch"]
-
-  # Shadow CRDs from tech operators — read-only for status aggregation
-  - apiGroups:
-      - "github.lab.inklogic.tech"
-      - "discord.lab.inklogic.tech"
-      - "kubernetes.lab.inklogic.tech"
-      - "postgres.lab.inklogic.tech"
-    resources: ["*"]
-    verbs: ["get", "list", "watch"]
-
-  # OperatorRegistration — watcher + bootstrap write access
+  # OperatorRegistration — watch-only (tech operators bootstrap registrations)
   - apiGroups: ["lab.inklogic.tech"]
     resources: ["operatorregistrations"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
+    verbs: ["get", "list", "watch"]
 
   # KubeOps leader election
   - apiGroups: ["coordination.k8s.io"]
@@ -393,7 +384,8 @@ rules:
 {{- if .Values.operators.postgres.enabled }}
 ---
 # ClusterRole for lab-postgres
-# Needs: core Lab CRDs (watch), postgres.lab.inklogic.tech (full), secrets, batch/jobs.
+# Needs: core Lab CRDs (read-only watch), postgres.lab.inklogic.tech typed shadows + tech CRDs,
+#        CNPG clusters, secrets, batch/jobs, namespaces.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -402,79 +394,104 @@ metadata:
     {{- include "lab-operators.labels" . | nindent 4 }}
     app.kubernetes.io/name: lab-postgres
 rules:
-  # Core Lab CRDs — read org membership and resource specs
+  # Core Lab CRDs — read-only watch (UseReadOnlyCoreWatch)
   - apiGroups: ["lab.inklogic.tech"]
     resources:
       - organizations
       - teams
-      - members
       - accounts
       - firefighters
-    verbs: ["get", "list", "watch", "update", "patch"]
+    verbs: ["get", "list", "watch"]
 
-  # Postgres provider and tech CRDs — full ownership
+  # Postgres provider CRD — targeted get (PostgresProviderContextResolver; not watched)
+  - apiGroups: ["postgres.lab.inklogic.tech"]
+    resources: ["postgres"]
+    verbs: ["get"]
+
+  # Postgres tech CRDs — read-only watch (KubeOps informers + cluster list)
   - apiGroups: ["postgres.lab.inklogic.tech"]
     resources:
-      - postgres
       - clusters
       - databases
-      - backups
-      - restores
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["get", "list", "watch"]
 
-  # Shared lab.inklogic.tech Shadow CRD — full access for shadow lifecycle management
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Backups — watch + status phase updates (BackupPostgresController)
+  - apiGroups: ["postgres.lab.inklogic.tech"]
+    resources: ["backups"]
+    verbs: ["get", "list", "watch"]
 
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["shadows/status"]
-    verbs: ["get", "update", "patch"]
+  - apiGroups: ["postgres.lab.inklogic.tech"]
+    resources: ["backups/status"]
+    verbs: ["update"]
 
-  # OperatorRegistration — bootstrap write access (no watcher; lab operator watches this resource)
-  - apiGroups: ["lab.inklogic.tech"]
-    resources: ["operatorregistrations"]
-    verbs: ["get", "create", "update", "patch"]
+  # Restores — watch + self-delete + status phase updates (RestorePostgresController)
+  - apiGroups: ["postgres.lab.inklogic.tech"]
+    resources: ["restores"]
+    verbs: ["get", "list", "watch", "delete"]
 
-  # Postgres CRD status sub-resources
+  - apiGroups: ["postgres.lab.inklogic.tech"]
+    resources: ["restores/status"]
+    verbs: ["update"]
+
+  # Typed Postgres shadow CRDs — get/create via PostgresShadowHelper (imperative; not watched)
   - apiGroups: ["postgres.lab.inklogic.tech"]
     resources:
-      - postgres/status
-      - clusters/status
-      - databases/status
-      - backups/status
-      - restores/status
-    verbs: ["get", "update", "patch"]
+      - teampostgresshadows
+      - accountpostgresshadows
+      - organizationpostgresshadows
+      - databasepostgresshadows
+      - firefighterpostgresshadows
+      - backuppostgresshadows
+      - restorepostgresshadows
+      - postgresclusterstatuses
+      - objectstorestatuses
+    verbs: ["get", "create"]
 
-  # CNPG tech cluster CRD — managed by Postgres operator
+  # Typed Postgres shadow CRDs — delete on entity cleanup paths only
+  - apiGroups: ["postgres.lab.inklogic.tech"]
+    resources:
+      - teampostgresshadows
+      - postgresclusterstatuses
+      - objectstorestatuses
+    verbs: ["delete"]
+
+  - apiGroups: ["postgres.lab.inklogic.tech"]
+    resources:
+      - teampostgresshadows/status
+      - accountpostgresshadows/status
+      - organizationpostgresshadows/status
+      - databasepostgresshadows/status
+      - firefighterpostgresshadows/status
+      - backuppostgresshadows/status
+      - restorepostgresshadows/status
+      - postgresclusterstatuses/status
+      - objectstorestatuses/status
+    verbs: ["update"]
+
+  # CNPG tech cluster CRD — managed by PostgresClusterController
   - apiGroups: ["postgresql.cnpg.io"]
     resources: ["clusters"]
     verbs: ["get", "create", "update", "delete"]
 
-  # S3 ObjectStore CRD
+  # S3 ObjectStore CRD — read by ObjectStoreResolver
   - apiGroups: ["s3.lab.inklogic.tech"]
     resources: ["objectstores"]
     verbs: ["get", "list", "watch"]
 
-  # Kubernetes Jobs — create backup/restore jobs
+  # Kubernetes Jobs — backup/restore job lifecycle
   - apiGroups: ["batch"]
     resources: ["jobs"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["get", "create", "delete"]
 
-  # Namespaces — read for namespace-scoped resource targeting
+  # Namespaces — bootstrap account/org credential namespaces
   - apiGroups: [""]
     resources: ["namespaces"]
     verbs: ["get", "create"]
 
-  # Secrets — reading DB credentials and provider config
+  # Secrets — DB credentials and provider config (including cleanup)
   - apiGroups: [""]
     resources: ["secrets"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
-
-  # ConfigMaps — operator configuration
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["get", "create", "update", "delete"]
 
   # Events
   - apiGroups: [""]
