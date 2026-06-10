@@ -73,17 +73,27 @@ rules:
   # Fleet bundles — upsert via CustomObjectUpsertHelper; delete on product/database cleanup
   - apiGroups: ["fleet.cattle.io"]
     resources: ["bundles"]
-    verbs: ["get", "create", "update", "delete"]
+    verbs: ["get", "list", "watch", "create", "update", "delete"]
 
   # Fleet GitRepos — upsert via CustomObjectUpsertHelper; delete on product/deployment-target cleanup
   - apiGroups: ["fleet.cattle.io"]
     resources: ["gitrepos"]
-    verbs: ["get", "create", "update", "delete"]
+    verbs: ["get", "list", "watch", "create", "update", "delete"]
 
   # Fleet bundle namespace mappings — upsert only (Organization/Cloud/Team controllers)
   - apiGroups: ["fleet.cattle.io"]
     resources: ["bundlenamespacemappings"]
-    verbs: ["get", "create", "update"]
+    verbs: ["get", "list", "watch", "create", "update"]
+
+  # Fleet workspace read GlobalRole escalation — operator must hold every permission it grants
+  # (FleetWorkspaceGlobalRoleApplicator.BuildReadRoleBody namespacedRules)
+  - apiGroups: ["fleet.cattle.io"]
+    resources:
+      - clusterregistrationtokens
+      - gitreporestrictions
+      - clusters
+      - clustergroups
+    verbs: ["get", "list", "watch"]
 
   # Rancher projects — reconcile lifecycle (RancherProjectReconciliation)
   - apiGroups: ["management.cattle.io"]
@@ -105,10 +115,11 @@ rules:
     resources: ["roletemplates"]
     verbs: ["get", "create", "update"]
 
-  # Rancher Fleet workspaces — idempotent bootstrap (FleetWorkspaceService)
+  # Rancher Fleet workspaces — idempotent bootstrap (FleetWorkspaceService;
+  # list/watch also required for GlobalRole escalation in FleetWorkspaceGlobalRoleApplicator)
   - apiGroups: ["management.cattle.io"]
     resources: ["fleetworkspaces"]
-    verbs: ["get", "create"]
+    verbs: ["get", "list", "watch", "create"]
 
   # Rancher cluster role bindings — cluster-scoped RBAC (RancherClusterBindingApplicator)
   - apiGroups: ["management.cattle.io"]
