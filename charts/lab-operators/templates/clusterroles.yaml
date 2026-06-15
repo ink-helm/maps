@@ -334,7 +334,7 @@ metadata:
     {{- include "lab-operators.labels" . | nindent 4 }}
     app.kubernetes.io/name: lab
 rules:
-  # Core Lab CRDs — watch + finalizer patch (EntityFinalizerAttacher, legacy cleanup)
+  # Core Lab CRDs — watch + finalizer patch/update (EntityFinalizerAttacher, legacy cleanup, finalizer release)
   - apiGroups: ["lab.inklogic.tech"]
     resources:
       - organizations
@@ -348,7 +348,7 @@ rules:
       - environments
       - zones
       - deploymenttargets
-    verbs: ["get", "list", "watch", "patch"]
+    verbs: ["get", "list", "watch", "patch", "update"]
 
   # OrganizationPrimer delete — Lab initiates deletion once all shadows are Ready
   - apiGroups: ["lab.inklogic.tech"]
