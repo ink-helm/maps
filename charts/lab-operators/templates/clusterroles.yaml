@@ -395,7 +395,7 @@ rules:
 {{- if .Values.operators.postgres.enabled }}
 ---
 # ClusterRole for lab-postgres
-# Needs: core Lab CRDs (read-only watch), postgres.lab.inklogic.tech typed shadows + tech CRDs,
+# Needs: core Lab CRDs (read-only watch), shared Shadow CRD + postgres.lab.inklogic.tech tech CRDs,
 #        CNPG clusters, secrets, batch/jobs, namespaces.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -444,39 +444,13 @@ rules:
     resources: ["restores/status"]
     verbs: ["update"]
 
-  # Typed Postgres shadow CRDs — get/create via PostgresShadowHelper (imperative; not watched)
-  - apiGroups: ["postgres.lab.inklogic.tech"]
-    resources:
-      - teampostgresshadows
-      - accountpostgresshadows
-      - organizationpostgresshadows
-      - databasepostgresshadows
-      - firefighterpostgresshadows
-      - backuppostgresshadows
-      - restorepostgresshadows
-      - postgresclusterstatuses
-      - objectstorestatuses
-    verbs: ["get", "create"]
+  # Shared Shadow CRD — tech operator shadow lifecycle (PostgresShadowService / GenericShadowService)
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows"]
+    verbs: ["get", "list", "create", "delete"]
 
-  # Typed Postgres shadow CRDs — delete on entity cleanup paths only
-  - apiGroups: ["postgres.lab.inklogic.tech"]
-    resources:
-      - teampostgresshadows
-      - postgresclusterstatuses
-      - objectstorestatuses
-    verbs: ["delete"]
-
-  - apiGroups: ["postgres.lab.inklogic.tech"]
-    resources:
-      - teampostgresshadows/status
-      - accountpostgresshadows/status
-      - organizationpostgresshadows/status
-      - databasepostgresshadows/status
-      - firefighterpostgresshadows/status
-      - backuppostgresshadows/status
-      - restorepostgresshadows/status
-      - postgresclusterstatuses/status
-      - objectstorestatuses/status
+  - apiGroups: ["lab.inklogic.tech"]
+    resources: ["shadows/status"]
     verbs: ["update"]
 
   # CNPG tech cluster CRD — managed by PostgresClusterController
