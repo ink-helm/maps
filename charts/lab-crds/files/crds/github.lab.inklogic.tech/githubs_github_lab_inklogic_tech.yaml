@@ -24,6 +24,8 @@ spec:
               organisation:
                 nullable: true
                 type: string
+              enablePro:
+                type: boolean
               require2Fa:
                 enum:
                 - NotRequired
