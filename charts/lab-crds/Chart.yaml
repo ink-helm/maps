@@ -6,8 +6,8 @@ description: 'Custom Resource Definitions (CRDs) for the Lab operator platform. 
 
   '
 type: application
-version: 2026.7.1476
-appVersion: "2ab325b"
+version: 2026.7.1488
+appVersion: "a3177d7"
 keywords:
 - lab
 - operators
@@ -21,5 +21,5 @@ maintainers:
   url: https://github.com/ink-logic
 annotations:
   artifacthub.io/category: integration-delivery
-  lab.inklogic.tech/source-commit: 2ab325b20a23b4c954d107bda52d49e0b2e27f12
-  lab.inklogic.tech/source-commit-short: 2ab325b
+  lab.inklogic.tech/source-commit: a3177d7fe2ba606b3f2141df79a31cefc780155e
+  lab.inklogic.tech/source-commit-short: a3177d7
