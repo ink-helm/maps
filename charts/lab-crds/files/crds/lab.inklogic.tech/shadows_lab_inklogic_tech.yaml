@@ -50,6 +50,10 @@ spec:
                 format: date-time
                 nullable: true
                 type: string
+              lastDriftVerifiedAt:
+                format: date-time
+                nullable: true
+                type: string
               lastAttemptedAt:
                 format: date-time
                 nullable: true
