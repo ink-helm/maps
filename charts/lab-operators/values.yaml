@@ -75,6 +75,12 @@ operators:
         value: "Production"
       - name: ASPNETCORE_URLS
         value: "http://+:8080"
+      - name: POD_NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+      - name: OPERATOR_SERVICE_ACCOUNT_NAME
+        value: "lab-kubernetes"
       - name: Logging__LogLevel__Default
         value: "Information"
       - name: Logging__LogLevel__KubeOps
